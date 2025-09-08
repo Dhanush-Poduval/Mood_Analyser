@@ -1,4 +1,5 @@
 from fastapi import FastAPI,APIRouter,Depends,Form,HTTPException,status
+from typing import List
 from sqlalchemy.orm import Session
 from ..database import get_db
 from .. import models,schemas
@@ -42,4 +43,18 @@ def delete_mood(mood_id:int,db:Session=Depends(get_db)):
       db.delete(moods)
       db.commit()
       return{'Delete':f'deleted the {moods.id} Mood '}
+
+@router.get('/moods',response_model=List[schemas.Showcase_Moods])
+def get_moods(user_id:int,db:Session=Depends(get_db)):
+      moods=db.query(models.Mood).filter(models.Mood.userid==user_id).first()
+      if not moods:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
+      return moods
+@router.get('/models/{id}',response_model=schemas.Showcase_Moods)
+def specific_mood(mood_id:int, db:Session=Depends(get_db)):
+      mood=db.query(models.Mood).filter(models.Mood.id==mood_id).first()
+      if not mood:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='No mood created')
+      return mood
+      
       
