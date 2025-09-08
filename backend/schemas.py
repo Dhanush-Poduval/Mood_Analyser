@@ -14,3 +14,10 @@ class Show_user(BaseModel):
 class Login(BaseModel):
     email:str
     password:str
+
+
+class Mood(BaseModel):
+    mood:str
+    content:str
+    userid:int
+    
