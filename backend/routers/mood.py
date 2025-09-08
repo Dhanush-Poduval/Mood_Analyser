@@ -23,3 +23,23 @@ def add_mood(moodshi:schemas.Mood,db:Session=Depends(get_db)):
         db.refresh(mood)
 
         return mood
+
+@router.put('/update_mood')
+def update_mood(mood_id:int, updated_mood:schemas.Mood, db:Session=Depends(get_db)):
+    mood=db.query(models.Mood).filter(models.Mood.id==mood_id).first()
+    if not mood:
+          raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Mood not found")
+    mood.mood_set=updated_mood.mood
+    db.commit()
+    db.refresh(mood)
+    return mood
+
+@router.delete('/delete')
+def delete_mood(mood_id:int,db:Session=Depends(get_db)):
+      moods=db.query(models.Mood).filter(models.Mood.id==mood_id).first()
+      if not moods:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="No mood log found")
+      db.delete(moods)
+      db.commit()
+      return{'Delete':f'deleted the {moods.id} Mood '}
+      
