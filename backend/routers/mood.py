@@ -1,4 +1,4 @@
-from fastapi import FastAPI,APIRouter,Depends,Form,HTTPException,status
+from fastapi import FastAPI,APIRouter,Depends,HTTPException,status
 from typing import List
 from sqlalchemy.orm import Session
 from ..database import get_db
@@ -45,11 +45,13 @@ def get_moods(db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(
       if not moods:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
       return moods
-@router.get('/models/{id}',response_model=schemas.Showcase_Moods)
+@router.get('/models/{mood_id}',response_model=schemas.Showcase_Moods)
 def specific_mood(mood_id:int, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
       mood=db.query(models.Mood).filter(models.Mood.id==mood_id,models.Mood.userid==current_user.id).first()
       if not mood:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='No mood created')
       return mood
+
+
       
       
