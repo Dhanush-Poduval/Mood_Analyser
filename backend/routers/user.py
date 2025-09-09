@@ -1,15 +1,20 @@
 from fastapi import FastAPI,Depends,HTTPException,status,APIRouter
-from ..database import engine,get_db
+from ..database import get_db
 from .. import models , schemas
 from sqlalchemy.orm import Session
+from passlib.context import CryptContext
 
 app=FastAPI()
+
+pwd_context=CryptContext(schemes=['bcrypt'],deprecated="auto")
 
 router=APIRouter(tags=['User'])
 
 @router.post('/signup')
-def create_user(signup:schemas.Show_user , db:Session=Depends(get_db)):
-    new_user=models.User(name=signup.name,email=signup.email,password=signup.password)
+def create_user(signup:schemas.Signup , db:Session=Depends(get_db)):
+    hashedPassword=""
+    hashedPassword=pwd_context.hash(signup.password)
+    new_user=models.User(name=signup.name,email=signup.email,password=hashedPassword)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
