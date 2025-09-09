@@ -27,7 +27,7 @@ def login(login:schemas.Login,db:Session=Depends(get_db)):
     user=db.query(models.User).filter(models.User.email==login.email).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Email Entered is Wrong")
-    if login.password!=user.password:
+    if not pwd_context.verify(login.password,user.password):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Password is wrong")
     
     
