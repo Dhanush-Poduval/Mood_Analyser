@@ -4,6 +4,7 @@ from .. import models , schemas , token
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm
+from typing import List
 app=FastAPI()
 
 
@@ -38,3 +39,8 @@ def login(db:Session=Depends(get_db),user:OAuth2PasswordRequestForm=Depends()):
     )
     print(access_token)
     return{'access_token':access_token,"token_type":"bearer"}
+
+@router.get('/show_user',response_model=List[schemas.Show_user])
+def show_user(db:Session=Depends(get_db)):
+    user=db.query(models.User).all()
+    return user
