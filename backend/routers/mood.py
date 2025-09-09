@@ -2,7 +2,7 @@ from fastapi import FastAPI,APIRouter,Depends,Form,HTTPException,status
 from typing import List
 from sqlalchemy.orm import Session
 from ..database import get_db
-from .. import models,schemas
+from .. import models,schemas,oauth2
 
 app =FastAPI()
 
@@ -13,9 +13,9 @@ def test():
     return 'Success'
 
 @router.post('/add_mood')
-def add_mood(moodshi:schemas.Mood,db:Session=Depends(get_db)):
-        mood=models.Mood(mood_set=moodshi.mood,content=moodshi.content,userid=moodshi.userid)
-        user=db.query(models.User).filter(models.User.id==mood.userid).first()
+def add_mood(moodshi:schemas.Mood,db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
+        mood=models.Mood(mood_set=moodshi.mood,content=moodshi.content,userid=current_user.id)
+        user=db.query(models.User).filter(models.User.id==current_user.id).first()
         if not user:
               raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User not found")
               
@@ -26,7 +26,7 @@ def add_mood(moodshi:schemas.Mood,db:Session=Depends(get_db)):
         return mood
 
 @router.put('/update_mood')
-def update_mood(mood_id:int, updated_mood:schemas.Mood, db:Session=Depends(get_db)):
+def update_mood(mood_id:int, updated_mood:schemas.Mood, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
     mood=db.query(models.Mood).filter(models.Mood.id==mood_id).first()
     if not mood:
           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Mood not found")

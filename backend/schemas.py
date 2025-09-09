@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class User(BaseModel):
     id:int
@@ -28,7 +29,12 @@ class UserBase(BaseModel):
 class Mood(BaseModel):
     mood:str
     content:str
-    userid:int
+class Show_Mood(BaseModel):
+    mood:str
+    content:str
+    user_id:int
+    class Config():
+        orm_mode=True
 
 class Showcase_Moods(BaseModel):
     mood_set:str
@@ -37,3 +43,11 @@ class Showcase_Moods(BaseModel):
     owner:UserBase
     class Config():
         orm_mode = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel): #jwt
+    email: Optional[str]=None
