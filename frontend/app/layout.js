@@ -1,15 +1,27 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono ,Fugaz_One} from "next/font/google";
 import "./globals.css";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
+const fugaz=Fugaz_One({subsets:['latin'],weight:['400']})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const header=(
+  <header className="p-4 sm:p-8 flex items-center justify-between gap-4">
+    <Link href="/">
+    <h1 className={`text-base sm:text-lg textGradiant ${fugaz.className}`}>Moodle</h1>
+    </Link>
+    <div className="flex items-center justify-between">
+    PLACEHOLDER || STATS
+   </div>
+  </header>
+)
 
 export const metadata = {
   title: "Create Next App",
@@ -20,8 +32,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
-      >
+        className={`w-full max-w-{1000px} mx-auto text-sm sm:text-base min-h-screen flex flex-col text-slate-500${geistSans.variable} ${geistMono.variable} antialiased `}
+      > {header}
         {children}
       </body>
     </html>
