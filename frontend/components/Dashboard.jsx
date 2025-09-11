@@ -39,7 +39,7 @@ useEffect(() => {
         const dateKey = new Date(entry.created_at)
           .toISOString()
           .split("T")[0];
-        formatted[dateKey] = { mood: entry.mood_set, content: entry.content }
+        formatted[dateKey] = {id:entry.id, mood: entry.mood_set, content: entry.content }
       })
 
       setTimeline(formatted)
@@ -72,7 +72,7 @@ useEffect(() => {
         
       })
       const data=await res.json();
-      setTimeline(prev=>({...prev,[dateKey]:{mood:moody,content}}));
+      setTimeline(prev=>({...prev,[dateKey]:{id:data.id ,mood:moody,content}}));
       setMood('')
       setContent('')
 
@@ -86,9 +86,6 @@ useEffect(() => {
   }
   
   const now = new Date()
-
-  
-
   const statuses = {
     num_days:14,
     time_remaining: `${23 - now.getHours()}H ${60 - now.getMinutes()}M`,
@@ -102,9 +99,6 @@ useEffect(() => {
     'Good': '😊',
     'Elated': '😍',
   }
-
-  
-  
   return (
     <div className='flex flex-col flex-1 gap-8 sm:gap-12 md:gap-16'>
       <div className='grid grid-cols-3 bg-indigo-50 text-indigo-500 p-4 gap-4 rounded-lg'>
@@ -139,7 +133,20 @@ useEffect(() => {
 ):""}
         
       </div>
-      <Calendar completeData={timeline}/>
+      <Calendar 
+  completeData={timeline} 
+  onUpdateMood={(dayMoodId, newMood) => {
+    setTimeline(prev => {
+      const updatedTimeline = { ...prev };
+      const dayKey = Object.keys(updatedTimeline).find(
+        key => updatedTimeline[key].id === dayMoodId
+      );
+      if (dayKey) updatedTimeline[dayKey].mood = newMood;
+      return updatedTimeline;
+    });
+  }}
+/>
+
     </div>
     
   )
