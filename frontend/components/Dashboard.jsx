@@ -38,8 +38,8 @@ useEffect(() => {
       data.forEach(entry => {
         const dateKey = new Date(entry.created_at)
           .toISOString()
-          .split("T")[0]; // normalize into yyyy-mm-dd
-        formatted[dateKey] = { mood: entry.mood, content: entry.content }
+          .split("T")[0];
+        formatted[dateKey] = { mood: entry.mood_set, content: entry.content }
       })
 
       setTimeline(formatted)
