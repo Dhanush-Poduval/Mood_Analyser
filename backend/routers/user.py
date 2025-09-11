@@ -53,3 +53,14 @@ def delete_user(db:Session=Depends(get_db),current_user:schemas.Show_user=Depend
     db.delete(user)
     db.commit()
     return{'delete':'User Deleted'}
+
+@router.put('/update_password')
+def update_name(psw:str, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
+    user=db.query(models.User).filter(models.User.id==current_user.id).first()
+    hashedPassword=""
+    hashedPassword=pwd_context.hash(psw)
+    user.password=hashedPassword
+    db.commit()
+    db.refresh(user)
+    return user
+    
