@@ -29,6 +29,9 @@ class UserBase(BaseModel):
 class Mood(BaseModel):
     mood:str
     content:str
+class Moody(BaseModel):
+    id:int
+    mood:str
 class Show_Mood(BaseModel):
     mood:str
     content:str

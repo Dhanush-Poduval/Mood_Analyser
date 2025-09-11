@@ -21,20 +21,20 @@ def add_mood(moodshi:schemas.Mood,db:Session=Depends(get_db),current_user:schema
         return mood
 
 @router.put('/update_mood')
-def update_mood(mood_id:int, updated_mood:str, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
-    mood=db.query(models.Mood).filter(models.Mood.id==mood_id,models.Mood.userid==current_user.id).first()
+def update_mood(mood1:schemas.Moody, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
+    mood=db.query(models.Mood).filter(models.Mood.id==mood1.id,models.Mood.userid==current_user.id).first()
     if not mood:
           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Mood not found")
-    mood.mood_set=updated_mood
+    mood.mood_set=mood1.mood
     db.commit()
     db.refresh(mood)
     return mood
 @router.put('/update_mood/content')
-def update_mood(mood_id:int,updated_content:str, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
-    mood=db.query(models.Mood).filter(models.Mood.id==mood_id,models.Mood.userid==current_user.id).first()
+def update_mood(mood1:schemas.Mood, db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
+    mood=db.query(models.Mood).filter(models.Mood.id==mood1.id,models.Mood.userid==current_user.id).first()
     if not mood:
           raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Mood not found")
-    mood.content=updated_content
+    mood.content=mood1.content
     db.commit()
     db.refresh(mood)
     return mood
