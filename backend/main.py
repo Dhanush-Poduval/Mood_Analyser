@@ -8,17 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 app=FastAPI()
 
 origins = [
-    "http://localhost:3000",  # Next.js local dev
-    "http://127.0.0.1:3000", # just in case
-    # you can add deployed frontend URLs here too
+    "http://localhost:3000", 
+    "http://127.0.0.1:3000",
+    
 ]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,          # Allowed origins
+    allow_origins=origins,         
     allow_credentials=True,
-    allow_methods=["*"],            # GET, POST, PUT, DELETE etc.
-    allow_headers=["*"],            # Allow all headers
+    allow_methods=["*"],         
+    allow_headers=["*"],     
 )
 
 
