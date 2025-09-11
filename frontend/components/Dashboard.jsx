@@ -22,6 +22,30 @@ export default function Dashboard() {
     setContent(data)
     console.log(data)
   }
+  useEffect(() => {
+  async function fetchTimeline() {
+    const token = localStorage.getItem('token')
+    try {
+      const res = await fetch('http://127.0.0.1:8000/moods', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if (!res.ok) throw new Error("Failed to fetch moods")
+      const data = await res.json()
+      const formatted = {}
+      data.forEach(entry => {
+        formatted[entry.created_at] = { mood: entry.mood, content: entry.content }
+      })
+
+      setTimeline(formatted)
+    } catch (err) {
+      console.error("Error loading moods:", err)
+    }
+  }
+
+  fetchTimeline()
+}, [])
   const handleSubmit=async()=>{
     const today = new Date();
     const dateKey = `${today.getFullYear()}-${(today.getMonth()+1)
@@ -37,7 +61,8 @@ export default function Dashboard() {
         },
         body:JSON.stringify({
             mood:moody,
-            content:content
+            content:content,
+            
         })
         
       })
@@ -117,7 +142,6 @@ export default function Dashboard() {
         
       </div>
       <Calendar completeData={timeline}/>
-      {console.log(timeline)}
     </div>
     
   )
