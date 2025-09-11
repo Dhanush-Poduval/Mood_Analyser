@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Depends,HTTPException,status,APIRouter
 from ..database import get_db
-from .. import models , schemas , token
+from .. import models , schemas , token ,oauth2
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordRequestForm
@@ -47,3 +47,9 @@ def login(db:Session=Depends(get_db),user:OAuth2PasswordRequestForm=Depends()):
 def show_user(db:Session=Depends(get_db)):
     user=db.query(models.User).all()
     return user
+@router.delete('/delete_user')
+def delete_user(db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
+    user=db.query(models.User).filter(models.User.id==current_user.id).first()
+    db.delete(user)
+    db.commit()
+    return{'delete':'User Deleted'}
