@@ -15,6 +15,9 @@ pwd_context=CryptContext(schemes=['bcrypt'],deprecated="auto")
 
 @router.post('/signup')
 def create_user(signup:schemas.Signup , db:Session=Depends(get_db)):
+    existing_user=db.query(models.User).filter(models.User.email==signup.email).first()
+    if existing_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="User Already Has An Account")
     hashedPassword=""
     hashedPassword=pwd_context.hash(signup.password)
     new_user=models.User(name=signup.name,email=signup.email,password=hashedPassword)
