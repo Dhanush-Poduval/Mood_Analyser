@@ -116,7 +116,7 @@ export default function Dashboard() {
 ):""}
         
       </div>
-      <Calendar />
+      <Calendar completeData={timeline}/>
       {console.log(timeline)}
     </div>
     
