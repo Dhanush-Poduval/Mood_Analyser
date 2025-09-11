@@ -95,13 +95,6 @@ useEffect(() => {
     date:new Date().toDateString()
   }
 
-  
-
-    
-      
-
-
-
   const moods = {
     'Very Sad': '😭',
     'Sad': '🥲',

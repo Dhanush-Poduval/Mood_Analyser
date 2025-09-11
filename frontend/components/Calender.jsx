@@ -1,14 +1,13 @@
 'use client'
 import { Fugaz_One } from 'next/font/google'
 import React, { useState } from 'react'
+import { Edit, Trash2 } from 'lucide-react';
 
 const months = { 'January': 'Jan', 'February': 'Feb', 'March': 'Mar', 'April': 'Apr', 'May': 'May', 'June': 'Jun', 'July': 'Jul', 'August': 'Aug', 'September': 'Sept', 'October': 'Oct', 'November': 'Nov', 'December': 'Dec' }
 const monthsArr = Object.keys(months)
 const now = new Date()
 const dayList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
 const fugaz = Fugaz_One({ subsets: ["latin"], weight: ['400'] })
-
 const moodColors = {
   'Very Sad': '#a78bfa',
   'Sad': '#8b5cf6',
@@ -16,7 +15,6 @@ const moodColors = {
   'Good': '#6d28d9',
   'Elated': '#5b21b6',
 }
-
 export default function Calendar({ completeData }) {
   const currMonth = now.getMonth()
   const [selectedMonth, setSelectMonth] = useState(monthsArr[currMonth])
@@ -50,7 +48,6 @@ export default function Calendar({ completeData }) {
 
   return (
     <div className='flex flex-col gap-2'>
-      {/* Header */}
       <div className='grid grid-cols-5 gap-4'>
         <button onClick={() => handleIncrementMonth(-1)} className='mr-auto text-indigo-400 text-lg sm:text-xl duration-200 hover:opacity-60'>Previous</button>
         <p className={'text-center col-span-3 capitalized whitespace-nowrap textGradient ' + fugaz.className}>
@@ -58,8 +55,6 @@ export default function Calendar({ completeData }) {
         </p>
         <button onClick={() => handleIncrementMonth(+1)} className='ml-auto text-indigo-400 text-lg sm:text-xl duration-200 hover:opacity-60'>Next</button>
       </div>
-
-      {/* Calendar Grid */}
       <div className='flex flex-col overflow-hidden gap-1 py-4 sm:py-6 md:py-10'>
         {Array.from({ length: numRows }).map((_, rowIndex) => {
           let dayNumber = rowIndex * 7 - firstDayOfMonth + 1
@@ -80,18 +75,35 @@ export default function Calendar({ completeData }) {
                 dayNumber++
 
                 return (
-                  <div
+                 <div
                     key={colIndex}
                     style={{ background: color }}
                     title={note}
                     className={
-                      'text-xs sm:text-sm border border-solid p-2 flex items-center justify-center rounded-lg relative ' +
-                      (isToday ? ' border-indigo-500 font-bold' : ' border-indigo-200') +
-                      (color === 'white' ? ' text-indigo-500' : ' text-white')
+                        'text-xs sm:text-sm border border-solid p-2 flex flex-col items-center justify-center rounded-lg relative ' +
+                        (isToday ? ' border-indigo-500 font-bold' : ' border-indigo-200') +
+                        (color === 'white' ? ' text-indigo-500' : ' text-white')
                     }
-                  >
+                    >
                     <p>{renderedDay}</p>
-                  </div>
+
+                    {/* Show icons if there is content */}
+                    {dayMood && note && (
+                        <div className="flex gap-1 absolute bottom-1 right-1">
+                        <Edit
+                            size={14}
+                            className="text-white cursor-pointer hover:text-yellow-300"
+                            onClick={() => handleUpdate(dayNumber, dayMood)}
+                        />
+                        <Trash2
+                            size={14}
+                            className="text-white cursor-pointer hover:text-red-500"
+                            onClick={() => handleDelete(dayNumber)}
+                        />
+                        </div>
+                    )}
+                 </div>
+
                 )
               })}
             </div>
