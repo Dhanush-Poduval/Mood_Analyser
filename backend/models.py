@@ -1,5 +1,6 @@
 from .database import Base
-from sqlalchemy import Column,Integer,String,ForeignKey
+from sqlalchemy import Column,Integer,String,ForeignKey,DateTime
+from datetime import datetime,timezone
 from sqlalchemy.orm import relationship
 
 class User(Base):
@@ -17,5 +18,6 @@ class Mood(Base):
     mood_set=Column(String)
     content=Column(String)
     userid=Column(Integer,ForeignKey('user.id'))
+    created_at=Column(DateTime,default=lambda:datetime.now(timezone.utc))
     owner=relationship("User",back_populates='moods')
 

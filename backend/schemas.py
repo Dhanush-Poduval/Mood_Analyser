@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-
+from datetime import datetime
 class User(BaseModel):
     id:int
     name:str
@@ -33,6 +33,7 @@ class Show_Mood(BaseModel):
     mood:str
     content:str
     user_id:int
+    created_at:datetime
     class Config():
         orm_mode=True
 
@@ -40,6 +41,7 @@ class Showcase_Moods(BaseModel):
     mood_set:str
     content:str
     userid:int
+    created_at:datetime
     owner:UserBase
     class Config():
         orm_mode = True
