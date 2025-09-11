@@ -22,9 +22,9 @@ export default function Dashboard() {
     setContent(data)
     console.log(data)
   }
-  useEffect(() => {
+useEffect(() => {
+  const token = localStorage.getItem('token')
   async function fetchTimeline() {
-    const token = localStorage.getItem('token')
     try {
       const res = await fetch('http://127.0.0.1:8000/moods', {
         headers: {
@@ -33,9 +33,13 @@ export default function Dashboard() {
       })
       if (!res.ok) throw new Error("Failed to fetch moods")
       const data = await res.json()
+
       const formatted = {}
       data.forEach(entry => {
-        formatted[entry.created_at] = { mood: entry.mood, content: entry.content }
+        const dateKey = new Date(entry.created_at)
+          .toISOString()
+          .split("T")[0]; // normalize into yyyy-mm-dd
+        formatted[dateKey] = { mood: entry.mood, content: entry.content }
       })
 
       setTimeline(formatted)
@@ -46,6 +50,7 @@ export default function Dashboard() {
 
   fetchTimeline()
 }, [])
+
   const handleSubmit=async()=>{
     const today = new Date();
     const dateKey = `${today.getFullYear()}-${(today.getMonth()+1)

@@ -9,31 +9,28 @@ const dayList = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday
 
 const fugaz = Fugaz_One({ subsets: ["latin"], weight: ['400'] })
 
-// 💜 Purple shades for moods
 const moodColors = {
-  'Very Sad': '#a78bfa',   // light purple
-  'Sad': '#8b5cf6',        // medium purple
-  'Existing': '#7c3aed',   // darker purple
-  'Good': '#6d28d9',       // deep purple
-  'Elated': '#5b21b6',     // darkest purple
+  'Very Sad': '#a78bfa',
+  'Sad': '#8b5cf6',
+  'Existing': '#7c3aed',
+  'Good': '#6d28d9',
+  'Elated': '#5b21b6',
 }
 
-export default function Calendar(props) {
-  const { completeData } = props
+export default function Calendar({ completeData }) {
   const currMonth = now.getMonth()
-  const [selectedMonth, setSelectMonth] = useState(Object.keys(months)[currMonth])
+  const [selectedMonth, setSelectMonth] = useState(monthsArr[currMonth])
   const [selectedYear, setSelectedYear] = useState(now.getFullYear())
 
   const numericMonth = monthsArr.indexOf(selectedMonth)
-  // Expect flat data like { "2025-09-11": { mood, content } }
-const data = {}
-Object.keys(completeData || {}).forEach(dateKey => {
-  const [y, m, d] = dateKey.split("-").map(Number)
-  if (y === selectedYear && m - 1 === numericMonth) {
-    data[d] = completeData[dateKey]
-  }
-})
 
+  const data = {}
+  Object.keys(completeData || {}).forEach(dateKey => {
+    const [y, m, d] = dateKey.split('-').map(Number)
+    if (y === selectedYear && m - 1 === numericMonth) {
+      data[d] = completeData[dateKey]
+    }
+  })
 
   function handleIncrementMonth(val) {
     if (numericMonth + val < 0) {
@@ -47,53 +44,53 @@ Object.keys(completeData || {}).forEach(dateKey => {
     }
   }
 
-  const monthNow = new Date(selectedYear, Object.keys(months).indexOf(selectedMonth), 1)
-  const firstDayOfMonth = monthNow.getDay()
-  const daysInMonth = new Date(selectedYear, monthsArr.indexOf(selectedMonth) + 1, 0).getDate()
-  const daysToDisplay = firstDayOfMonth + daysInMonth
-  const numRows = (Math.floor(daysToDisplay / 7)) + (daysToDisplay % 7 ? 1 : 0)
+  const firstDayOfMonth = new Date(selectedYear, numericMonth, 1).getDay()
+  const daysInMonth = new Date(selectedYear, numericMonth + 1, 0).getDate()
+  const numRows = Math.ceil((firstDayOfMonth + daysInMonth) / 7)
 
   return (
     <div className='flex flex-col gap-2'>
       {/* Header */}
       <div className='grid grid-cols-5 gap-4'>
         <button onClick={() => handleIncrementMonth(-1)} className='mr-auto text-indigo-400 text-lg sm:text-xl duration-200 hover:opacity-60'>Previous</button>
-        <p className={'text-center col-span-3 capitalized whitespace-nowrap textGradient ' + fugaz.className}>{selectedMonth}, {selectedYear}</p>
+        <p className={'text-center col-span-3 capitalized whitespace-nowrap textGradient ' + fugaz.className}>
+          {selectedMonth}, {selectedYear}
+        </p>
         <button onClick={() => handleIncrementMonth(+1)} className='ml-auto text-indigo-400 text-lg sm:text-xl duration-200 hover:opacity-60'>Next</button>
       </div>
 
       {/* Calendar Grid */}
       <div className='flex flex-col overflow-hidden gap-1 py-4 sm:py-6 md:py-10'>
-        {[...Array(numRows).keys()].map((row, rowIndex) => {
+        {Array.from({ length: numRows }).map((_, rowIndex) => {
+          let dayNumber = rowIndex * 7 - firstDayOfMonth + 1
           return (
             <div key={rowIndex} className='grid grid-cols-7 gap-1'>
-              {dayList.map((dayOfWeek, dayOfWeekIndex) => {
-                let dayIndex = (rowIndex * 7) + dayOfWeekIndex - (firstDayOfMonth - 1)
-
-                let dayDisplay = dayIndex > daysInMonth ? false : (row === 0 && dayOfWeekIndex < firstDayOfMonth) ? false : true
-                let isToday = dayIndex === now.getDate() && selectedMonth === monthsArr[currMonth] && selectedYear === now.getFullYear()
-
-                if (!dayDisplay) {
-                  return <div className='bg-white' key={dayOfWeekIndex} />
+              {dayList.map((_, colIndex) => {
+                if (dayNumber < 1 || dayNumber > daysInMonth) {
+                  dayNumber++
+                  return <div className='bg-white' key={colIndex} />
                 }
 
-                // 🎨 Apply mood color
-                let dayMood = data?.[dayIndex]
-                let color = dayMood ? moodColors[dayMood.mood] : "white"
-                let note = dayMood ? dayMood.content : ""
+                const isToday = dayNumber === now.getDate() && numericMonth === now.getMonth() && selectedYear === now.getFullYear()
+                const dayMood = data[dayNumber]
+                const color = dayMood ? moodColors[dayMood.mood] : 'white'
+                const note = dayMood ? dayMood.content : ''
+
+                const renderedDay = dayNumber
+                dayNumber++
 
                 return (
                   <div
+                    key={colIndex}
                     style={{ background: color }}
+                    title={note}
                     className={
                       'text-xs sm:text-sm border border-solid p-2 flex items-center justify-center rounded-lg relative ' +
                       (isToday ? ' border-indigo-500 font-bold' : ' border-indigo-200') +
-                      (color === "white" ? ' text-indigo-500' : ' text-white')
+                      (color === 'white' ? ' text-indigo-500' : ' text-white')
                     }
-                    key={dayOfWeekIndex}
-                    title={note}
                   >
-                    <p>{dayIndex}</p>
+                    <p>{renderedDay}</p>
                   </div>
                 )
               })}
