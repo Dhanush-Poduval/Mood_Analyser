@@ -15,12 +15,43 @@ const fugaz = Fugaz_One({ subsets: ["latin"], weight: ['400'] });
 export default function Dashboard() {
   const [moody , setMood]=useState("")
   const[content,setContent]=useState("")
+  const[timeline,setTimeline]=useState({});
 
   const handleContent=(e)=>{
     const data=e.target.value;
     setContent(data)
+    console.log(data)
   }
   const handleSubmit=async()=>{
+    const today = new Date();
+    const dateKey = `${today.getFullYear()}-${(today.getMonth()+1)
+    .toString()
+    .padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
+    const token=localStorage.getItem('token')
+    try{
+        const res=await fetch('http://127.0.0.1:8000/add_mood',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            Authorization:`Bearer ${token}`
+        },
+        body:JSON.stringify({
+            mood:moody,
+            content:content
+        })
+        
+      })
+      const data=await res.json();
+      setTimeline(prev=>({...prev,[dateKey]:{mood:moody,content}}));
+      setMood('')
+      setContent('')
+
+
+    }catch(error){
+       console.log("error",error);
+       alert('Error Saving Mood')
+    }
+   
 
   }
   
@@ -77,8 +108,8 @@ export default function Dashboard() {
           )
         })}
         {moody ? (  <div className="flex w-full max-w-sm items-center gap-2">
-      <Input type="" placeholder={`Why Feeling ${moody}`} />
-      <Button type="submit" variant="outline">
+      <Input type="" placeholder={`Why Feeling ${moody}`} onChange={handleContent}/>
+      <Button type="submit" variant="outline" onClick={handleSubmit}>
         Add Mood
       </Button>
     </div>
@@ -86,6 +117,8 @@ export default function Dashboard() {
         
       </div>
       <Calendar />
+      {console.log(timeline)}
     </div>
+    
   )
 }
