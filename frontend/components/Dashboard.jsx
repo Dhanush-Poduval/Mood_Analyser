@@ -92,6 +92,8 @@ useEffect(() => {
       })
       const data=await res.json();
       setTimeline(prev=>({...prev,[dateKey]:{id:data.id ,mood:moody,content}}));
+      const mood=localStorage.setItem('mood',data.id)
+      console.log(mood)
       setMood('')
       setContent('')
 

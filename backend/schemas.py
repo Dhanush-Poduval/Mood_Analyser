@@ -33,6 +33,7 @@ class Moody(BaseModel):
     id:int
     mood:str
 class Show_Mood(BaseModel):
+    id:int
     mood:str
     content:str
     user_id:int
@@ -41,6 +42,7 @@ class Show_Mood(BaseModel):
         orm_mode=True
 
 class Showcase_Moods(BaseModel):
+    id:int
     mood_set:str
     content:str
     userid:int

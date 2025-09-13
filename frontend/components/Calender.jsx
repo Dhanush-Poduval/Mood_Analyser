@@ -43,6 +43,24 @@ export default function Calendar({ completeData, onUpdateMood }) {
       console.log("Error", error)
     }
   }
+  const handleDelete=async(dayMood,dayNumber)=>{
+    const token=localStorage.getItem('token')
+    const mood=localStorage.getItem('mood')
+    try{
+      const res=await fetch(`http://127.0.0.1:8000/delete?mood_id=${dayMood.id}`,{
+        method:'DELETE',
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      })
+      const data=await res.json()
+      onUpdateMood(dayNumber, null)
+      console.log(dayMood.id)
+
+    }catch(error){
+      console.log("Error",error)
+    }
+  }
 
   // Map completeData keys (YYYY-MM-DD) to easy-to-access format
   const data = {}
@@ -111,26 +129,26 @@ export default function Calendar({ completeData, onUpdateMood }) {
                     }
                   >
                     <p>{renderedDay}</p>
-                    {dayMood && (
-                      <div className="flex gap-1 absolute bottom-1 right-1">
-                        <Edit
-                          size={14}
-                          className="text-white cursor-pointer hover:text-yellow-300"
-                          onClick={() => {
-                            const newMood = prompt(
-                              "Choose a new mood (Very Sad, Sad, Existing, Good, Elated):",
-                              dayMood.mood
-                            )
-                            if (newMood && dayId) handleUpdate(dayId, newMood)
-                          }}
-                        />
-                        <Trash2
-                          size={14}
-                          className="text-white cursor-pointer hover:text-red-500"
-                          onClick={() => handleDelete(dayNumber)}
-                        />
-                      </div>
-                    )}
+                 {dayMood && (
+  <div className="flex gap-1 absolute bottom-1 right-1">
+    <Edit
+      size={14}
+      className="text-white cursor-pointer hover:text-yellow-300"
+      onClick={() => {
+        const newMood = prompt(
+          "Choose a new mood (Very Sad, Sad, Existing, Good, Elated):",
+          dayMood.mood
+        )
+        if (newMood && dayId) handleUpdate(dayId, newMood)
+      }}
+    />
+    <Trash2
+      size={14}
+      className="text-white cursor-pointer hover:text-red-500"
+      onClick={() => handleDelete(dayMood, renderedDay)}
+    />
+  </div>
+)}
                   </div>
                 )
               })}
