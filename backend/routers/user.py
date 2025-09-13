@@ -43,10 +43,13 @@ def login(db:Session=Depends(get_db),user:OAuth2PasswordRequestForm=Depends()):
     print(access_token)
     return{'access_token':access_token,"token_type":"bearer"}
 
-@router.get('/show_user',response_model=List[schemas.Show_user])
-def show_user(db:Session=Depends(get_db)):
-    user=db.query(models.User).all()
-    return user
+@router.get('/show_user')
+def show_user(db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
+    user=db.query(models.User).filter(models.User.id==current_user.id).first()
+    return {
+        'name':user.name,
+        'email':user.email
+    }
 @router.delete('/delete_user')
 def delete_user(db:Session=Depends(get_db),current_user:schemas.Show_user=Depends(oauth2.get_current_user)):
     user=db.query(models.User).filter(models.User.id==current_user.id).first()

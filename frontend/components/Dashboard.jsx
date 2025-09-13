@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [moody , setMood]=useState("")
   const[content,setContent]=useState("")
   const[timeline,setTimeline]=useState({});
+  const[name,setName]=useState("")
 
   const handleContent=(e)=>{
     const data=e.target.value;
@@ -47,10 +48,28 @@ useEffect(() => {
       console.error("Error loading moods:", err)
     }
   }
+  async function userDetails() {
+    try{
+      const res=await fetch('http://127.0.0.1:8000/show_user',{
+        headers:{
+          'Content-type':'application/json',
+          Authorization:`Bearer ${token}`
+        }
+      })
+      const data=await res.json()
+      setName(data.name)
+      console.log(data)
+
+    }catch(error){
+      console.log("Error",error)
+    }
+    
+  }
 
   fetchTimeline()
+  userDetails()
 }, [])
-
+  
   const handleSubmit=async()=>{
     const today = new Date();
     const dateKey = `${today.getFullYear()}-${(today.getMonth()+1)
@@ -87,7 +106,7 @@ useEffect(() => {
   
   const now = new Date()
   const statuses = {
-    num_days:14,
+    name:name,
     time_remaining: `${23 - now.getHours()}H ${60 - now.getMinutes()}M`,
     date:new Date().toDateString()
   }
@@ -100,11 +119,11 @@ useEffect(() => {
     'Elated': '😍',
   }
   return (
-    <div className='flex flex-col flex-1 gap-8 sm:gap-12 md:gap-16'>
-      <div className='grid grid-cols-3 bg-indigo-50 text-indigo-500 p-4 gap-4 rounded-lg'>
+    <div className='flex flex-col flex-1 gap-8 sm:gap-12 md:gap-16 justify-end'>
+      <div className='grid grid-cols-3 bg-indigo-50 text-indigo-500 p-4 gap-4 rounded-lg items-end'>
         {Object.keys(statuses).map((status, statusIndex) => {
           return (
-            <div key={statusIndex} className=' flex flex-col gap-1 sm:gap-2'>
+            <div key={statusIndex} className=' flex flex-col gap-2 sm:gap-4 '>
               <p className='font-medium capitalize text-xs sm:text-sm truncate'>{status.replaceAll('_', ' ')}</p>
               <p className={'text-base sm:text-lg truncate ' + fugaz.className}>{statuses[status]}{status === 'num_days' ? ' 🔥' : ''}</p>
             </div>
